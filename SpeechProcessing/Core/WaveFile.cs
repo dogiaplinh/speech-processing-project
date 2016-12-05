@@ -18,30 +18,30 @@ namespace Core
             LoadWave();
         }
 
-        public short AudioFormat { get; private set; }
+        public short AudioFormat { get; set; }
 
-        public short BitsPerSample { get; private set; }
+        public short BitsPerSample { get; set; }
 
-        public short BlockAlign { get; private set; }
+        public short BlockAlign { get; set; }
 
-        public int ByteRate { get; private set; }
+        public int ByteRate { get; set; }
 
         [JsonIgnore]
-        public int[][] Data { get; private set; }
+        public int[][] Data { get; set; }
 
-        public int DataSize { get; private set; }
+        public int DataSize { get; set; }
 
-        public int FileSize { get; private set; }
+        public int FileSize { get; set; }
 
-        public int FmtChunkSize { get; private set; }
+        public int FmtChunkSize { get; set; }
 
-        public string Format { get; private set; }
+        public string Format { get; set; }
 
-        public short NumChannels { get; private set; }
+        public short NumChannels { get; set; }
 
         public string Path { get; set; }
 
-        public int SampleRate { get; private set; }
+        public int SampleRate { get; set; }
 
         private void LoadChunk(FileStream fs)
         {
@@ -137,6 +137,38 @@ namespace Core
             LoadChunk(fs); // read RIFF chunk
             LoadChunk(fs); // read fmt chunk
             LoadChunk(fs); // read data chunk
+        }
+
+        public void SaveWave(string outputFile)
+        {
+            if (Path == null)
+                Path = outputFile;
+            var encoder = Encoding.ASCII;
+            using (var writer = new BinaryWriter(File.Create(outputFile), encoder))
+            {
+                writer.Write(encoder.GetBytes("RIFF"));
+                writer.Write(FileSize);
+                writer.Write(encoder.GetBytes("WAVE"));
+                writer.Write(encoder.GetBytes("fmt "));
+                writer.Write(FmtChunkSize);
+                writer.Write(AudioFormat);
+                writer.Write(NumChannels);
+                writer.Write(SampleRate);
+                writer.Write(ByteRate);
+                writer.Write(BlockAlign);
+                writer.Write(BitsPerSample);
+                writer.Write(encoder.GetBytes("data"));
+                writer.Write(DataSize);
+                for (int i = 0; i < Data[0].Length; i++)
+                {
+                    for (int j = 0; j < NumChannels; j++)
+                    {
+                        if (BlockAlign / NumChannels == 2)
+                            writer.Write((short)Data[j][i]);
+                        else writer.Write(Data[j][i]);
+                    }
+                }
+            }
         }
     }
 }

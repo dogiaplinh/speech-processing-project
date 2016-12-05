@@ -13,9 +13,20 @@ namespace ConsoleApp
 
         private static void Main(string[] args)
         {
-            string filePath = Environment.CurrentDirectory + "\\" + fileName;
-            WaveFile waveFile = new WaveFile(filePath);
-            Console.WriteLine(JsonConvert.SerializeObject(waveFile));
+            //string filePath = Environment.CurrentDirectory + "\\" + fileName;
+            //WaveFile waveFile = new WaveFile(filePath);
+            //Console.WriteLine(JsonConvert.SerializeObject(waveFile));
+            const int min = -30000;
+            const int max = 30000;
+            const int step = 2000;
+            for (int i = min; i < max; i += step)
+            {
+                int value = i >> 3;
+                int encoded = Algorithm.Encode(value);
+                int decoded = Algorithm.Decode((byte)encoded);
+                //Console.WriteLine($"{Convert.ToString(i, 2)} {Convert.ToString(encoded ^ 0x55, 2)} {Convert.ToString(decoded, 2)}");
+                Console.WriteLine($"{value} {encoded} {decoded}");
+            }
         }
     }
 }

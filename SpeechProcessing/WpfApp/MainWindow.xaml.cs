@@ -1,11 +1,10 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Linq;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System;
 
 namespace WpfApp
 {
@@ -23,9 +22,13 @@ namespace WpfApp
 
         private void MainViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(mainViewModel.File))
+            if (e.PropertyName == nameof(mainViewModel.OriginalFile))
             {
-                DrawWaveLine(mainViewModel.File.Data[0], canvas);
+                DrawWaveLine(mainViewModel.OriginalFile.Data[0], canvas1);
+            }
+            else if (e.PropertyName == nameof(mainViewModel.ConvertedFile))
+            {
+                DrawWaveLine(mainViewModel.ConvertedFile.Data[0], canvas2);
             }
         }
 
@@ -48,11 +51,6 @@ namespace WpfApp
             for (int i = 1; i < array.Length - 2; i++)
             {
                 current = new Point(step * i, ConvertY(array[i], max, height));
-                //pathFigure.Segments.Add(new QuadraticBezierSegment()
-                //{
-                //    Point1 = prev,
-                //    Point2 = new Point((current.X + prev.X) / 2, (current.Y + prev.Y) / 2)
-                //});
                 pathFigure.Segments.Add(new LineSegment()
                 {
                     Point = current
