@@ -7,8 +7,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         Title="MainWindow"
         WindowState="Maximized"
-        Width="525"
-        Height="350"
         mc:Ignorable="d">
 
     <d:Window.DataContext>
@@ -38,18 +36,25 @@
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <StackPanel>
-                    <TextBlock Text="{Binding OriginalFile.Path}" />
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Margin="10,10,0,10">
+                    <Run Text="File: " />
+                    <Run Text="{Binding OriginalFile.Path}" />
+                </TextBlock>
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,0,0,10">
+                    <TextBlock Text="Phương pháp:"
+                               Margin="10,0,0,0" />
+                    <ComboBox Width="100"
+                              SelectedIndex="{Binding Method, Mode=TwoWay}"
+                              Margin="30,0,0,0">
+                        <ComboBox.Items>
+                            <ComboBoxItem Content="Analog" />
+                            <ComboBoxItem Content="Số" />
+                        </ComboBox.Items>
+                    </ComboBox>
                 </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <TextBlock Text="{Binding OriginalFile.NumChannels}" />
-                </StackPanel>
-            </Grid>
+            </StackPanel>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
@@ -57,30 +62,41 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
-                    <TextBlock Text="File gốc"
-                               Margin="0,0,0,20" />
-                    <Button Content="Play"
-                            Command="{Binding PlayOriginalCommand}" />
+                    <TextBlock Margin="0,0,0,20"
+                               Text="File gốc" />
+                    <Button HorizontalAlignment="Center"
+                            Command="{Binding PlayOriginalCommand}"
+                            Content="Play"
+                            Padding="10,5" />
                 </StackPanel>
-                <Canvas Grid.Column="1"
-                        x:Name="canvas1"
-                        Grid.Row="1" />
+                <Grid Grid.Row="1"
+                      Grid.Column="1"
+                      Background="Black">
+                    <Canvas x:Name="canvas1"
+                            Margin="0,10" />
+                </Grid>
             </Grid>
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="2"
+                  Margin="0,10,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <StackPanel HorizontalAlignment="Center"
                             VerticalAlignment="Center">
-                    <TextBlock Text="File giải mã"
-                               Margin="0,0,0,20" />
-                    <Button Content="Play"
-                            Command="{Binding PlayConvertedCommand}" />
+                    <TextBlock Margin="0,0,0,20"
+                               Text="File giải mã" />
+                    <Button HorizontalAlignment="Center"
+                            Command="{Binding PlayConvertedCommand}"
+                            Content="Play"
+                            Padding="10,5" />
                 </StackPanel>
-                <Canvas Grid.Column="1"
-                        x:Name="canvas2"
-                        Grid.Row="1" />
+                <Grid Grid.Row="1"
+                      Grid.Column="1"
+                      Background="Black">
+                    <Canvas x:Name="canvas2"
+                            Margin="0,10" />
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

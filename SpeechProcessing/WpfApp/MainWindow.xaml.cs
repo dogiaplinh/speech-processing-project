@@ -35,12 +35,12 @@ namespace WpfApp
         private void DrawWaveLine(int[] array, Canvas canvas)
         {
             if (array.Length < 2) return;
-            int max = array.Max(x => Math.Abs(x));
+            int max = array.Max(y => Math.Abs(y));
             double height = canvas.ActualHeight;
             double step = canvas.ActualWidth / (array.Length - 1);
             Path path = new Path()
             {
-                Stroke = new SolidColorBrush(Colors.Black),
+                Stroke = new SolidColorBrush(Colors.Green),
                 StrokeThickness = 1,
             };
             PathGeometry pathGeometry = new PathGeometry();

@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using static System.Math;
 
 namespace Core
 {
     public static class Algorithm
     {
+        private const double A = 87.6;
+        private static double Z = 1 + Log(A);
+
         public static byte Encode(int number)
         {
+            number = number >> 3;
             byte sign = (byte)(number < 0 ? 0x00 : 0x80);
             if (sign == 0)
             {
@@ -31,6 +37,36 @@ namespace Core
             return (byte)((sign | a << 4 | (number & mask) >> (a == 0 ? a + 1 : a)) ^ 0x55);
         }
 
+        public static byte EncodeLog(int number)
+        {
+            double x = number / 32768.0;
+            double y;
+            if (Abs(x) < 1 / A)
+            {
+                y = A * x / Z;
+            }
+            else
+            {
+                y = Sign(x) * (1 + Log(A * Abs(x))) / Z;
+            }
+            return (byte)((y + 1) * 128);
+        }
+
+        public static int DecodeLog(byte number)
+        {
+            double y = number / 128.0 - 1;
+            double x;
+            if (Abs(y) < 1 / Z)
+            {
+                x = y * Z / A;
+            }
+            else
+            {
+                x = Sign(y) * Pow(E, Abs(y) * Z - 1) / A;
+            }
+            return (int)(x * 32768);
+        }
+
         public static int Decode(byte number)
         {
             number ^= 0x55;
@@ -47,10 +83,10 @@ namespace Core
             {
                 output = (output & -0x1000) | (~output & 0xFFF);
             }
-            return output;
+            return output << 3;
         }
 
-        public static WaveFile Encode(WaveFile file)
+        public static WaveFile Encode(WaveFile file, Func<int, byte> func)
         {
             WaveFile output = new WaveFile
             {
@@ -71,14 +107,14 @@ namespace Core
                 data[i] = new int[file.Data[i].Length];
                 for (int j = 0; j < file.Data[i].Length; j++)
                 {
-                    data[i][j] = Encode(file.Data[i][j] >> 3);
+                    data[i][j] = func(file.Data[i][j]);
                 }
             }
             output.Data = data;
             return output;
         }
 
-        public static WaveFile Decode(WaveFile file)
+        public static WaveFile Decode(WaveFile file, Func<byte, int> func)
         {
             WaveFile output = new WaveFile
             {
@@ -99,7 +135,7 @@ namespace Core
                 data[i] = new int[file.Data[i].Length];
                 for (int j = 0; j < file.Data[i].Length; j++)
                 {
-                    data[i][j] = Decode((byte)(file.Data[i][j] & 0xFF)) << 3;
+                    data[i][j] = func((byte)(file.Data[i][j] & 0xFF));
                 }
             }
             output.Data = data;
